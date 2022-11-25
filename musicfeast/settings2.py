@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
-    'tinymce',
 ]
 
 MIDDLEWARE = [
@@ -156,10 +155,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-#STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = 'static/'
-#ROOT_URLCONF
-STATIC_URL = '/static_musicfeast/'
+ROOT_URLCONF
+# STATIC_URL = '/static_musicfeast/'
 # STATIC_ROOT ='static'
-MEDIA_URL = 'media_musicfeast/'
-MEDIA_ROOT = '/django/desarrollo/backend/django/media/'
+# MEDIA_URL = 'media_musicfeast/'
+# MEDIA_ROOT = '/musicfeast/static'
