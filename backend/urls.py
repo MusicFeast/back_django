@@ -17,10 +17,12 @@ urlpatterns = [
     path('', include(router.urls)),
     path('get-carousel', get_carousel),
     path('get-artists', get_artists),
+    path('get-artist/', get_artist),
     path('get-artists-home', get_artists_home),
     path('get-news', get_news),
     path('get-perfil-data/', get_perfil_data),
     path('validate-perfil/', validate_perfil),
     path('get-about', get_about),
     path('get-core-team', get_core_team),
+    path('get-avatars/', get_avatars),
 ]

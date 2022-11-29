@@ -49,6 +49,17 @@ def get_artists(request):
     serializer = ArtistSerializer(artists, many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_artist(request):
+    data = request.data
+    artists = Artist.objects.filter(is_visible=True, id=data['id'])
+    print(artists)
+    serializer = ArtistSerializer(artists, many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
 class HomeVS(viewsets.ModelViewSet):
     permission_classes=[IsAuthenticated]
     authentication_classes=[TokenAuthentication]
@@ -294,4 +305,17 @@ def get_core_team(request):
         datos['social'] = social
 
         data.append(datos)
+    return Response(data,status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_avatars(request):
+    datos = request.data
+    data = []
+    for id in datos['artists']:
+        item = Artist.objects.get(id_collection=id)
+        serializer = ArtistSerializer(item).data
+        data.append(serializer)
     return Response(data,status=status.HTTP_200_OK)
