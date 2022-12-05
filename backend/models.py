@@ -98,3 +98,23 @@ class CoreTeam(models.Model):
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
         return '%s'%(self.name)
+
+class Events(models.Model):
+    id_contract=models.PositiveBigIntegerField(null=False,blank=False, default=0)
+    name=models.CharField(max_length=255,null=False,blank=False, default="")
+    artist=models.OneToOneField(Artist,on_delete=models.CASCADE)
+    img=models.ImageField(null=True, blank=True)
+    description=HTMLField()
+    coordinates=models.CharField(max_length=255,null=True,blank=True)
+    date_event = models.DateTimeField()
+    location_event=models.CharField(max_length=255,null=True,blank=True)
+    location_name=models.CharField(max_length=255,null=True,blank=True)
+    location_desc=models.CharField(max_length=255,null=True,blank=True)
+    is_visible=models.BooleanField(default=False)
+    link_instagram=models.CharField(max_length=255,null=True,blank=True)
+    link_twitter=models.CharField(max_length=255,null=True,blank=True)
+    link_facebook=models.CharField(max_length=255,null=True,blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return '%s'%(self.name)
