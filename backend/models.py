@@ -1,7 +1,7 @@
 from email.mime import image
 from email.policy import default
 from django.db import models
-from django.db import models
+from django.contrib.auth.models import *
 from tinymce.models import HTMLField
 
 # Create your models here.
@@ -100,16 +100,15 @@ class CoreTeam(models.Model):
         return '%s'%(self.name)
 
 class Events(models.Model):
-    id_contract=models.PositiveBigIntegerField(null=False,blank=False, default=0)
     name=models.CharField(max_length=255,null=False,blank=False, default="")
-    artist=models.OneToOneField(Artist,on_delete=models.CASCADE)
+    artist=models.ForeignKey(Artist,on_delete=models.CASCADE)
     img=models.ImageField(null=True, blank=True)
     description=HTMLField()
     coordinates=models.CharField(max_length=255,null=True,blank=True)
     date_event = models.DateTimeField()
     location_event=models.CharField(max_length=255,null=True,blank=True)
     location_name=models.CharField(max_length=255,null=True,blank=True)
-    location_desc=models.CharField(max_length=255,null=True,blank=True)
+    location_desc=models.TextField(max_length=255,null=True,blank=True)
     is_visible=models.BooleanField(default=False)
     link_instagram=models.CharField(max_length=255,null=True,blank=True)
     link_twitter=models.CharField(max_length=255,null=True,blank=True)
@@ -118,3 +117,11 @@ class Events(models.Model):
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
         return '%s'%(self.name)
+
+class EventTicket(models.Model):
+    serie_id=models.CharField(max_length=255,null=True,blank=True)
+    event=models.ForeignKey(Events, null=True,blank=True, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return '%s'%(self.serie_id)

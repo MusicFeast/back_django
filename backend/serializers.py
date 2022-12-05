@@ -41,3 +41,13 @@ class CoreTeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = CoreTeam
         fields = '__all__'  
+
+class EventsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Events
+        fields = '__all__'  
+
+class EventTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventTicket
+        fields = '__all__'  

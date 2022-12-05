@@ -11,6 +11,8 @@ router.register(r'news', NewsVS,basename='news')
 router.register(r'perfil', PerfilVS,basename='perfil')
 router.register(r'about', AboutVS,basename='about')
 router.register(r'coreteam', CoreTeamVS,basename='coreteam')
+router.register(r'events', EventsVS,basename='events')
+router.register(r'eventticket', EventTicketVS,basename='eventticket')
 #router.register(r'address', AddressVS,basename='address')
 
 urlpatterns = [
@@ -25,4 +27,6 @@ urlpatterns = [
     path('get-about', get_about),
     path('get-core-team', get_core_team),
     path('get-avatars/', get_avatars),
+    path('get-events/', get_events),
+    path('get-event-tickets/', get_event_tickets),
 ]

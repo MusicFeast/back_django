@@ -319,3 +319,41 @@ def get_avatars(request):
         serializer = ArtistSerializer(item).data
         data.append(serializer)
     return Response(data,status=status.HTTP_200_OK)
+
+class EventsVS(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = Events.objects.all()
+    serializer_class = EventsSerializer
+
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_events(request):
+    data = request.data
+    artist = Artist.objects.get(id_collection=data['artist_id'])
+    if artist:
+        events = Events.objects.filter(artist=artist ,is_visible=True)
+        serializer = EventsSerializer(events, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response([],status=status.HTTP_200_OK)
+
+class EventTicketVS(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = EventTicket.objects.all()
+    serializer_class = EventTicketSerializer
+    
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_event_tickets(request):
+    data = request.data
+    event = Events.objects.get(id=data['event_id'])
+    if event:
+        tickets = EventTicket.objects.filter(event=event)
+        serializer = EventTicketSerializer(tickets, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response([],status=status.HTTP_200_OK)
