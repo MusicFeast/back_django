@@ -370,6 +370,6 @@ class NftMediaVS(viewsets.ModelViewSet):
 @permission_classes([AllowAny])
 def get_media(request):
     data = request.data
-    media = NftMedia.objects.filter(tier=data['tier'])
+    media = NftMedia.objects.filter(tier=data['tier'], artist=data['artist'])
     serializer = NftMediaSerializer(media, many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)

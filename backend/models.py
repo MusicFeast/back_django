@@ -128,6 +128,7 @@ class EventTicket(models.Model):
     
 class NftMedia(models.Model):
     name=models.CharField(max_length=255,null=True,blank=True)
+    artist=models.CharField(max_length=255,null=True,blank=True)
     tier=models.CharField(max_length=255,null=True,blank=True)
     media=models.FileField(null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
