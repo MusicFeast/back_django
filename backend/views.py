@@ -357,3 +357,19 @@ def get_event_tickets(request):
         serializer = EventTicketSerializer(tickets, many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_200_OK)
+
+class NftMediaVS(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = NftMedia.objects.all()
+    serializer_class = NftMediaSerializer
+    
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_media(request):
+    data = request.data
+    media = NftMedia.objects.filter(tier=data['tier'])
+    serializer = NftMediaSerializer(media, many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)

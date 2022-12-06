@@ -13,6 +13,7 @@ router.register(r'about', AboutVS,basename='about')
 router.register(r'coreteam', CoreTeamVS,basename='coreteam')
 router.register(r'events', EventsVS,basename='events')
 router.register(r'eventticket', EventTicketVS,basename='eventticket')
+router.register(r'nftmedia', EventTicketVS,basename='nftmedia')
 #router.register(r'address', AddressVS,basename='address')
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     path('get-avatars/', get_avatars),
     path('get-events/', get_events),
     path('get-event-tickets/', get_event_tickets),
+    path('get-media/', get_media),
 ]

@@ -51,3 +51,8 @@ class EventTicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTicket
         fields = '__all__'  
+        
+class NftMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NftMedia
+        fields = '__all__'  

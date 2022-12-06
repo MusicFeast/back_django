@@ -125,3 +125,12 @@ class EventTicket(models.Model):
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
         return '%s'%(self.serie_id)
+    
+class NftMedia(models.Model):
+    name=models.CharField(max_length=255,null=True,blank=True)
+    tier=models.CharField(max_length=255,null=True,blank=True)
+    media=models.FileField(null=True,blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return '%s'%(self.name)
