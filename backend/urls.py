@@ -13,7 +13,12 @@ router.register(r'about', AboutVS,basename='about')
 router.register(r'coreteam', CoreTeamVS,basename='coreteam')
 router.register(r'events', EventsVS,basename='events')
 router.register(r'eventticket', EventTicketVS,basename='eventticket')
-router.register(r'nftmedia', EventTicketVS,basename='nftmedia')
+router.register(r'nftmedia', NftMediaVS,basename='nftmedia')
+router.register(r'infomf', InfoMFVS,basename='infomf')
+router.register(r'userdiscord', UserDiscordVS,basename='userdiscord')
+router.register(r'artistdiscord', ArtistDiscordVS,basename='artistdiscord')
+router.register(r'userroles', UserRolesVS,basename='userroles')
+router.register(r'suscribe', SuscribeVS,basename='suscribe')
 #router.register(r'address', AddressVS,basename='address')
 
 urlpatterns = [
@@ -31,4 +36,7 @@ urlpatterns = [
     path('get-events/', get_events),
     path('get-event-tickets/', get_event_tickets),
     path('get-media/', get_media),
+    path('get-info-mf', get_info_mf),
+    path('save-user-discord/', save_user_discord),
+    path('get-chats-enabled/', get_chats_enabled),
 ]

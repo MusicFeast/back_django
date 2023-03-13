@@ -56,3 +56,28 @@ class NftMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = NftMedia
         fields = '__all__'  
+        
+class InfoMFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfoMF
+        fields = '__all__'  
+        
+class UserDiscordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDiscord
+        fields = '__all__'  
+        
+class ArtistDiscordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArtistDiscord
+        fields = '__all__'  
+        
+class UserRolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRoles
+        fields = '__all__'  
+        
+class SuscribeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Suscribe
+        fields = '__all__'  

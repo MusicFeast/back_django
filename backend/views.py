@@ -56,7 +56,6 @@ def get_artists(request):
 def get_artist(request):
     data = request.data
     artists = Artist.objects.filter(is_visible=True, id=data['id'])
-    print(artists)
     serializer = ArtistSerializer(artists, many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
@@ -315,9 +314,10 @@ def get_avatars(request):
     datos = request.data
     data = []
     for id in datos['artists']:
-        item = Artist.objects.get(id_collection=id)
-        serializer = ArtistSerializer(item).data
-        data.append(serializer)
+        item = Artist.objects.filter(id_collection=id).first()
+        if item:
+            serializer = ArtistSerializer(item).data
+            data.append(serializer)
     return Response(data,status=status.HTTP_200_OK)
 
 class EventsVS(viewsets.ModelViewSet):
@@ -370,6 +370,77 @@ class NftMediaVS(viewsets.ModelViewSet):
 @permission_classes([AllowAny])
 def get_media(request):
     data = request.data
-    media = NftMedia.objects.filter(tier=data['tier'], artist=data['artist'])
-    serializer = NftMediaSerializer(media, many=True)
+    artist = Artist.objects.get(id_collection=data['artist'])
+    media = NftMedia.objects.get(artist=artist)
+    serializer = NftMediaSerializer(media)
+    if data['media'] == 'audio':
+        return Response({"media": serializer.data['audio']},status=status.HTTP_200_OK)
+    elif data['media'] == 'video':
+        return Response({"media": serializer.data['video']},status=status.HTTP_200_OK)
+    return Response([],status=status.HTTP_200_OK)
+
+class InfoMFVS(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = InfoMF.objects.all()
+    serializer_class = InfoMFSerializer
+    
+@api_view(["GET"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_info_mf(request):
+    info = InfoMF.objects.all()
+    serializer = InfoMFSerializer(info, many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
+    
+class ArtistDiscordVS(viewsets.ModelViewSet):
+    permission_classes=[AllowAny]
+    authentication_classes=[BasicAuthentication]
+    queryset = ArtistDiscord.objects.all()
+    serializer_class = ArtistDiscordSerializer
+    
+class UserDiscordVS(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = UserDiscord.objects.all()
+    serializer_class = UserDiscordSerializer
+    
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def save_user_discord(request):
+    data = request.data
+    userdc = UserDiscord.objects.filter(wallet=data['wallet'])
+    if userdc:
+        return Response(status=status.HTTP_200_OK)
+    user = UserDiscord.objects.create(wallet=data['wallet'], discord_id=data['discord_id'])
+    data_user = UserDiscordSerializer(user).data
+    return Response(data_user,status=status.HTTP_200_OK)
+
+class UserRolesVS(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = UserRoles.objects.all()
+    serializer_class = UserRolesSerializer
+    
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_chats_enabled(request):
+    data = request.data
+    userDiscord = UserDiscord.objects.filter(wallet=data['wallet'])
+    if userDiscord:
+        user = UserDiscord.objects.get(wallet=data['wallet'])
+        roles = UserRoles.objects.filter(user=user)
+        serializer = UserRolesSerializer(roles, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response([],status=status.HTTP_200_OK)
+
+class SuscribeVS(viewsets.ModelViewSet):
+    permission_classes=[AllowAny]
+    authentication_classes=[BasicAuthentication]
+    queryset = Suscribe.objects.all()
+    serializer_class = SuscribeSerializer

@@ -101,6 +101,7 @@ class CoreTeam(models.Model):
 
 class Events(models.Model):
     name=models.CharField(max_length=255,null=False,blank=False, default="")
+    serie_ticket=models.CharField(max_length=255,null=True,blank=True)
     artist=models.ForeignKey(Artist,on_delete=models.CASCADE)
     img=models.ImageField(null=True, blank=True)
     description=HTMLField()
@@ -127,11 +128,44 @@ class EventTicket(models.Model):
         return '%s'%(self.serie_id)
     
 class NftMedia(models.Model):
-    name=models.CharField(max_length=255,null=True,blank=True)
-    artist=models.CharField(max_length=255,null=True,blank=True)
-    tier=models.CharField(max_length=255,null=True,blank=True)
-    media=models.FileField(null=True,blank=True)
+    artist=models.OneToOneField(Artist,on_delete=models.CASCADE, null=True,blank=True)
+    audio=models.FileField(null=True,blank=True)
+    video=models.CharField(max_length=255,null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return '%s'%(self.name)
+        return '%s'%(self.artist)
+    
+class InfoMF(models.Model):
+    join_community=models.TextField(null=True,blank=True)
+    instagram_icon=models.CharField(max_length=255,null=True,blank=True, default="mdi-instagram")
+    instagram_link=models.CharField(max_length=255,null=True,blank=True)
+    twitter_icon=models.CharField(max_length=255,null=True,blank=True, default="mdi-twitter")
+    twitter_link=models.CharField(max_length=255,null=True,blank=True)
+    facebook_icon=models.CharField(max_length=255,null=True,blank=True, default="mdi-facebook")
+    facebook_link=models.CharField(max_length=255,null=True,blank=True)
+    discord_icon=models.CharField(max_length=255,null=True,blank=True, default="discord")
+    discord_link=models.CharField(max_length=255,null=True,blank=True)
+     
+class UserDiscord(models.Model):
+    wallet=models.CharField(max_length=255,null=True,blank=True, unique=True)
+    discord_id=models.CharField(max_length=255,null=True,blank=True)
+    def __str__(self):
+        return '%s'%(self.wallet)
+     
+class ArtistDiscord(models.Model):
+    artist=models.OneToOneField(Artist,on_delete=models.CASCADE, null=True,blank=True)
+    role_id=models.CharField(max_length=255,null=True,blank=True)
+    def __str__(self):
+        return '%s'%(self.artist.name)
+
+class UserRoles(models.Model):
+    user=models.ForeignKey(UserDiscord, null=True,blank=True, on_delete=models.CASCADE)
+    role=models.ForeignKey(ArtistDiscord, null=True,blank=True, on_delete=models.CASCADE)
+    def __str__(self):
+        return '%s'%(self.user.wallet)
+    
+class Suscribe(models.Model):
+    email=models.EmailField(max_length=255,null=True,blank=True, unique=True)
+    def __str__(self):
+        return '%s'%(self.email)
