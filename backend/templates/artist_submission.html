@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to Artist Submission</title>
+    <style>
+      /* Styles for the email body */
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #000; /* changed from #333 */
+        background-color: #f7f7f7;
+      }
+
+      /* Styles for the content */
+      .content {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #f2f2f2;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Styles for the header */
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Styles for the main text */
+      .main-text {
+        font-size: 24px;
+        margin-bottom: 30px;
+      }
+
+      /* Styles for the contact text */
+      .contact-text {
+        font-size: 18px;
+      }
+
+      .contact-text strong {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="header">
+        <img
+          src="https://bafkreibf7fppackca5gycaa7mgszivyza2jkbkwlsfmgse44efxt2xuvj4.ipfs.nftstorage.link/"
+          alt="Artist Submission logo"
+        />
+      </div>
+      <div class="main-text">{{network}}Artist Submission!</div>
+      <div class="contact-text">
+        <p>A new artist has registered on the platform:</p>
+        <ul>
+          <li><strong>Full name:</strong> {{full_name}}</li>
+          <li><strong>Artist name:</strong> {{name_artist}}</li>
+          <li><strong>Genre:</strong> {{genere}}</li>
+          <li><strong>Email:</strong> {{email}}</li>
+          <li><strong>Website:</strong> {{website}}</li>
+          <li><strong>Twitter:</strong> {{twitter}}</li>
+          <li><strong>Instagram:</strong> {{instagram}}</li>
+          <li><strong>Facebook:</strong> {{facebook}}</li>
+        </ul>
+        <p>Please contact them as soon as possible.</p>
+      </div>
+    </div>
+  </body>
+</html>

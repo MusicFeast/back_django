@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = '7m37yh%z8e!)60%nx!cma))ldm(6rq0)1b=4k$nqcq%bbl47@j'
+# SECRET_KEY = '7m37yh%z8e!)60%nx!cma))ldm(6rq0)1b=4k$nqcq%bbl47@j'
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -61,7 +61,7 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
-        #'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         # 'knox.auth.TokenAuthentication'
     ],
     # 'DATETIME_FORMAT': "%d/%m/%Y %H:%M:%S",
@@ -78,8 +78,8 @@ REST_FRAMEWORK = {
 
 ROOT_URLCONF = 'musicfeast.urls'
 
-CORS_ALLOW_ALL_ORIGINS=True
-CORS_ALLOW_CREDENTIALS=True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {
@@ -113,10 +113,10 @@ WSGI_APPLICATION = 'musicfeast.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config("DB_NAME"), 
-        'USER': config("DB_USER"), 
+        'NAME': config("DB_NAME"),
+        'USER': config("DB_USER"),
         'PASSWORD': config("DB_PASSWORD"),
-        'HOST': config("DB_HOST"), 
+        'HOST': config("DB_HOST"),
         'PORT': config("DB_PORT"),
     }
 }
@@ -153,12 +153,18 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = config('USER_MAIL')
+EMAIL_HOST_PASSWORD = config('PASSWORD_MAIL')
+EMAIL_USE_TLS = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-#STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 STATIC_ROOT = 'static/'
-#ROOT_URLCONF
+# ROOT_URLCONF
 STATIC_URL = '/static_musicfeast/'
 # STATIC_ROOT ='static'
 MEDIA_URL = 'media_musicfeast/'

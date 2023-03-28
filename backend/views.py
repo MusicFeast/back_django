@@ -1,3 +1,4 @@
+from decouple import config
 from copyreg import constructor
 from re import search
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -16,6 +17,10 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+
 
 # Create your views here.
 
@@ -46,9 +51,51 @@ class ArtistVS(viewsets.ModelViewSet):
 
 class ArtistSubmissionVS(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
-    authentication_classes = [BasicAuthentication]
+    # authentication_classes=[BasicAuthentication]
     queryset = ArtistSubmission.objects.all()
     serializer_class = ArtistSubmissionSerializer
+
+    def create(self, request):
+        data = request.data
+        try:
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            datos = serializer.data
+            network = "TESTNET: "
+            if config("NETWORK") == "mainnet":
+                network = ""
+            send_mail_mf(
+                # ["jburkholder1985@gmail.com", "blake_harden@yahoo.com"],
+                ["juanochandoa@gmail.com"],
+                'MusicFeast: You have a new artist submission',
+                'artist_submission.html',
+                {
+                    "network": network,
+                    "full_name": datos["full_name"],
+                    "name_artist": datos["name_artist"],
+                    "genere": datos["genere"],
+                    "email": datos["email"],
+                    "website": datos["website"] or "",
+                    "twitter": datos["twitter"] or "",
+                    "instagram": datos["instagram"] or "",
+                    "facebook": datos["facebook"] or "",
+                }
+            )
+            return Response(datos, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            print(e)
+            return Response("%s" % (e), status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class TiersComingSoonVS(viewsets.ModelViewSet):
@@ -530,3 +577,20 @@ class SubscribeVS(viewsets.ModelViewSet):
     authentication_classes = [BasicAuthentication]
     queryset = Subscribe.objects.all()
     serializer_class = SubscribeSerializer
+
+
+def send_mail_mf(users_mail, subject, template_name, context):
+    template = get_template(template_name)
+    content = template.render(context)
+
+    message = EmailMultiAlternatives(
+        subject=subject,
+        body='',
+        from_email=settings.EMAIL_HOST_USER,
+        to=users_mail,
+        cc=[]
+    )
+
+    message.attach_alternative(content, 'text/html')
+    message.send(fail_silently=False)
+    return
