@@ -1,7 +1,7 @@
 from copyreg import constructor
 from re import search
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.authentication import SessionAuthentication,BasicAuthentication,TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from crypt import crypt
 from .serializers import *
 from .models import *
@@ -9,21 +9,23 @@ import json
 from django.contrib.auth import login
 import requests
 from django_filters import rest_framework as filters
-from rest_framework.permissions import IsAdminUser,IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
-from rest_framework import viewsets,status
-from rest_framework.decorators import api_view,permission_classes,authentication_classes
+from rest_framework import viewsets, status
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
+
 class CarouselVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = Carousel.objects.all()
     serializer_class = CarouselSerializer
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -32,13 +34,29 @@ class CarouselVS(viewsets.ModelViewSet):
 def get_carousel(request):
     carousel = Carousel.objects.filter(is_visible=True)
     serializer = CarouselSerializer(carousel, many=True)
-    return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ArtistVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+
+
+class ArtistSubmissionVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
+    queryset = ArtistSubmission.objects.all()
+    serializer_class = ArtistSubmissionSerializer
+
+
+class TiersComingSoonVS(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    queryset = TiersComingSoon.objects.all()
+    serializer_class = TiersComingSoonSerializer
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -47,7 +65,8 @@ class ArtistVS(viewsets.ModelViewSet):
 def get_artists(request):
     artists = Artist.objects.filter(is_visible=True)
     serializer = ArtistSerializer(artists, many=True)
-    return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @csrf_exempt
@@ -57,13 +76,45 @@ def get_artist(request):
     data = request.data
     artists = Artist.objects.filter(is_visible=True, id=data['id'])
     serializer = ArtistSerializer(artists, many=True)
-    return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_tiers_coming(request):
+    data = request.data
+    try:
+        artist = Artist.objects.get(id=data['id'])
+    except:
+        artist = None
+
+    print(artist)
+    if artist:
+        tiersDatin = TiersComingSoon.objects.filter(artist=artist).first()
+        if tiersDatin:
+            tiersData = TiersComingSoonSerializer(tiersDatin)
+            return Response(tiersData.data, status=status.HTTP_200_OK)
+        else:
+            tiersData = {
+                "tierOne": False,
+                "tierTwo": False,
+                "tierThree": False,
+                "tierFour": False,
+                "tierFive": False,
+                "tierSix": False,
+            }
+            return Response(tiersData, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class HomeVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = Home.objects.all()
     serializer_class = HomeSerializer
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -78,13 +129,15 @@ def get_artists_home(request):
         if item.is_visible:
             serializer = ArtistSerializer(item).data
             data.append(serializer)
-    return Response(data,status=status.HTTP_200_OK)
+    return Response(data, status=status.HTTP_200_OK)
+
 
 class NewsVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -93,27 +146,29 @@ class NewsVS(viewsets.ModelViewSet):
 def get_news(request):
     news = News.objects.filter(is_visible=True)
     serializer = NewsSerializer(news, many=True)
-    return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class PerfilVS(viewsets.ModelViewSet):
-    permission_classes=[AllowAny]
-    #authentication_classes=[BasicAuthentication]
+    permission_classes = [AllowAny]
+    # authentication_classes=[BasicAuthentication]
     queryset = Perfil.objects.all()
     serializer_class = PerfilSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = ('wallet', 'username')
 
-    def create(self,request):  
+    def create(self, request):
         data = request.data
         data.address = json.loads(data['address'])
-   
+
         try:
             if data.address['country'] and data.address['street_address'] and data.address['street_address2'] and data.address['city'] and data.address['state'] and data.address['postal']:
                 serializer = self.get_serializer(data=data)
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
                 perfil = Perfil.objects.get(wallet=data['wallet'])
-                address = Address.objects.create(perfil=perfil,country=data.address['country'],street_address=data.address['street_address'],street_address2=data.address['street_address2'],city=data.address['city'],state=data.address['state'],postal=data.address['postal'])
+                address = Address.objects.create(perfil=perfil, country=data.address['country'], street_address=data.address['street_address'],
+                                                 street_address2=data.address['street_address2'], city=data.address['city'], state=data.address['state'], postal=data.address['postal'])
                 data_address = AddressSerializer(address).data
                 headers = self.get_success_headers(serializer.data)
                 datos = serializer.data
@@ -132,20 +187,21 @@ class PerfilVS(viewsets.ModelViewSet):
                 return Response(datos, status=status.HTTP_201_CREATED, headers=headers)
         except Exception as e:
             print(e)
-            return Response("%s"%(e),status=status.HTTP_400_BAD_REQUEST)
-    
-    def update(self,request,*args,**kwargs):
+            return Response("%s" % (e), status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
         data = request.data
         data.address = json.loads(data['address'])
         try:
             if data.address['country'] and data.address['street_address'] and data.address['street_address2'] and data.address['city'] and data.address['state'] and data.address['postal']:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = self.get_serializer(instance, data=request.data, partial=partial)
-             
+                serializer = self.get_serializer(
+                    instance, data=request.data, partial=partial)
+
                 perfil = Perfil.objects.get(wallet=data['wallet'])
                 address = Address.objects.get(perfil=perfil)
-             
+
                 address.country = data.address['country']
                 address.street_address = data.address['street_address']
                 address.street_address2 = data.address['street_address2']
@@ -155,17 +211,18 @@ class PerfilVS(viewsets.ModelViewSet):
                 address.save()
 
                 data_address = AddressSerializer(address).data
-        
-                serializer.is_valid(raise_exception=True)                
+
+                serializer.is_valid(raise_exception=True)
                 self.perform_update(serializer)
 
                 datos = serializer.data
                 datos.address = data_address
-                return Response(datos,status=status.HTTP_200_OK)
+                return Response(datos, status=status.HTTP_200_OK)
             else:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
-                serializer = self.get_serializer(instance, data=request.data, partial=partial)
+                serializer = self.get_serializer(
+                    instance, data=request.data, partial=partial)
                 perfil = Perfil.objects.get(wallet=data['wallet'])
                 address = Address.objects.get(perfil=perfil)
                 data_address = AddressSerializer(address).data
@@ -173,18 +230,21 @@ class PerfilVS(viewsets.ModelViewSet):
                 self.perform_update(serializer)
                 datos = serializer.data
                 datos.address = data_address
-                return Response(datos,status=status.HTTP_200_OK)
+                return Response(datos, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response("%s"%(e),status=status.HTTP_400_BAD_REQUEST)
+            return Response("%s" % (e), status=status.HTTP_400_BAD_REQUEST)
+
     def list(self, request, *args, **kwargs):
-       return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def retrieve(self, request, *args, **kwargs):
-       return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 class AddressVS(viewsets.ModelViewSet):
-    permission_classes=[AllowAny]
-    authentication_classes=[BasicAuthentication]
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
 
@@ -202,8 +262,9 @@ def get_perfil_data(request):
         data_address = AddressSerializer(address).data
         datos = data_perfil
         datos['address'] = data_address
-        return Response([datos],status=status.HTTP_200_OK)
-    return Response([],status=status.HTTP_200_OK)
+        return Response([datos], status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @csrf_exempt
@@ -221,7 +282,8 @@ def validate_perfil(request):
     }
 
     if data['username']:
-        username = Perfil.objects.filter(username=data['username'].lower()).first()
+        username = Perfil.objects.filter(
+            username=data['username'].lower()).first()
         if (username and data['wallet'] != username.wallet and data['username'] != ""):
             perfil['username'] = True
 
@@ -231,31 +293,37 @@ def validate_perfil(request):
             perfil['email'] = True
 
     if data['discord']:
-        discord = Perfil.objects.filter(discord=data['discord'].lower()).first()
+        discord = Perfil.objects.filter(
+            discord=data['discord'].lower()).first()
         if (discord and data['wallet'] != discord.wallet and data['discord'] != ""):
             perfil['discord'] = True
 
     if data['instagram']:
-        instagram = Perfil.objects.filter(instagram=data['instagram'].lower()).first()
+        instagram = Perfil.objects.filter(
+            instagram=data['instagram'].lower()).first()
         if (instagram and data['wallet'] != instagram.wallet and data['instagram'] != ""):
             perfil['instagram'] = True
 
     if data['twitter']:
-        twitter = Perfil.objects.filter(twitter=data['twitter'].lower()).first()
+        twitter = Perfil.objects.filter(
+            twitter=data['twitter'].lower()).first()
         if (twitter and data['wallet'] != twitter.wallet and data['twitter'] != ""):
             perfil['twitter'] = True
 
     if data['telegram']:
-        telegram = Perfil.objects.filter(telegram=data['telegram'].lower()).first()
+        telegram = Perfil.objects.filter(
+            telegram=data['telegram'].lower()).first()
         if (telegram and data['wallet'] != telegram.wallet and data['telegram'] != ""):
             perfil['telegram'] = True
-    return Response(perfil,status=status.HTTP_200_OK)
+    return Response(perfil, status=status.HTTP_200_OK)
+
 
 class AboutVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = About.objects.all()
     serializer_class = AboutSerializer
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -264,13 +332,15 @@ class AboutVS(viewsets.ModelViewSet):
 def get_about(request):
     about = About.objects.filter(is_visible=True)
     serializer = AboutSerializer(about, many=True)
-    return Response(serializer.data,status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class CoreTeamVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = CoreTeam.objects.all()
     serializer_class = CoreTeamSerializer
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -304,7 +374,8 @@ def get_core_team(request):
         datos['social'] = social
 
         data.append(datos)
-    return Response(data,status=status.HTTP_200_OK)
+    return Response(data, status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @csrf_exempt
@@ -318,13 +389,15 @@ def get_avatars(request):
         if item:
             serializer = ArtistSerializer(item).data
             data.append(serializer)
-    return Response(data,status=status.HTTP_200_OK)
+    return Response(data, status=status.HTTP_200_OK)
+
 
 class EventsVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = Events.objects.all()
     serializer_class = EventsSerializer
+
 
 @api_view(["POST"])
 @csrf_exempt
@@ -334,17 +407,19 @@ def get_events(request):
     data = request.data
     artist = Artist.objects.get(id_collection=data['artist_id'])
     if artist:
-        events = Events.objects.filter(artist=artist ,is_visible=True)
+        events = Events.objects.filter(artist=artist, is_visible=True)
         serializer = EventsSerializer(events, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
-    return Response([],status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)
+
 
 class EventTicketVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = EventTicket.objects.all()
     serializer_class = EventTicketSerializer
-    
+
+
 @api_view(["POST"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -355,15 +430,17 @@ def get_event_tickets(request):
     if event:
         tickets = EventTicket.objects.filter(event=event)
         serializer = EventTicketSerializer(tickets, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
-    return Response([],status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)
+
 
 class NftMediaVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = NftMedia.objects.all()
     serializer_class = NftMediaSerializer
-    
+
+
 @api_view(["POST"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -374,17 +451,19 @@ def get_media(request):
     media = NftMedia.objects.get(artist=artist)
     serializer = NftMediaSerializer(media)
     if data['media'] == 'audio':
-        return Response({"media": serializer.data['audio']},status=status.HTTP_200_OK)
+        return Response({"media": serializer.data['audio']}, status=status.HTTP_200_OK)
     elif data['media'] == 'video':
-        return Response({"media": serializer.data['video']},status=status.HTTP_200_OK)
-    return Response([],status=status.HTTP_200_OK)
+        return Response({"media": serializer.data['video']}, status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)
+
 
 class InfoMFVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = InfoMF.objects.all()
     serializer_class = InfoMFSerializer
-    
+
+
 @api_view(["GET"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -392,20 +471,23 @@ class InfoMFVS(viewsets.ModelViewSet):
 def get_info_mf(request):
     info = InfoMF.objects.all()
     serializer = InfoMFSerializer(info, many=True)
-    return Response(serializer.data,status=status.HTTP_200_OK)
-    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ArtistDiscordVS(viewsets.ModelViewSet):
-    permission_classes=[AllowAny]
-    authentication_classes=[BasicAuthentication]
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
     queryset = ArtistDiscord.objects.all()
     serializer_class = ArtistDiscordSerializer
-    
+
+
 class UserDiscordVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = UserDiscord.objects.all()
     serializer_class = UserDiscordSerializer
-    
+
+
 @api_view(["POST"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -415,16 +497,19 @@ def save_user_discord(request):
     userdc = UserDiscord.objects.filter(wallet=data['wallet'])
     if userdc:
         return Response(status=status.HTTP_200_OK)
-    user = UserDiscord.objects.create(wallet=data['wallet'], discord_id=data['discord_id'])
+    user = UserDiscord.objects.create(
+        wallet=data['wallet'], discord_id=data['discord_id'])
     data_user = UserDiscordSerializer(user).data
-    return Response(data_user,status=status.HTTP_200_OK)
+    return Response(data_user, status=status.HTTP_200_OK)
+
 
 class UserRolesVS(viewsets.ModelViewSet):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
     queryset = UserRoles.objects.all()
     serializer_class = UserRolesSerializer
-    
+
+
 @api_view(["POST"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -436,11 +521,12 @@ def get_chats_enabled(request):
         user = UserDiscord.objects.get(wallet=data['wallet'])
         roles = UserRoles.objects.filter(user=user)
         serializer = UserRolesSerializer(roles, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
-    return Response([],status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response([], status=status.HTTP_200_OK)
 
-class SuscribeVS(viewsets.ModelViewSet):
-    permission_classes=[AllowAny]
-    authentication_classes=[BasicAuthentication]
-    queryset = Suscribe.objects.all()
-    serializer_class = SuscribeSerializer
+
+class SubscribeVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
+    queryset = Subscribe.objects.all()
+    serializer_class = SubscribeSerializer
