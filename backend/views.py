@@ -67,8 +67,7 @@ class ArtistSubmissionVS(viewsets.ModelViewSet):
             if config("NETWORK") == "mainnet":
                 network = ""
             send_mail_mf(
-                # ["jburkholder1985@gmail.com", "blake_harden@yahoo.com"],
-                ["juanochandoa@gmail.com"],
+                ["jburkholder1985@gmail.com", "blake_harden@yahoo.com"],
                 'MusicFeast: You have a new artist submission',
                 'artist_submission.html',
                 {
