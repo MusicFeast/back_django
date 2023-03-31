@@ -22,6 +22,8 @@ class Artist(models.Model):
                             blank=False, default="")
     description = HTMLField()
     about = HTMLField()
+    order_list = models.PositiveIntegerField(
+        null=False, blank=False, default=1)
     image = models.ImageField(null=True, blank=True)
     banner = models.ImageField(null=True, blank=True)
     banner_mobile = models.ImageField(null=True, blank=True)
@@ -31,10 +33,6 @@ class Artist(models.Model):
     twitter = models.CharField(max_length=255, null=True, blank=True)
     facebook = models.CharField(max_length=255, null=True, blank=True)
     discord = models.CharField(max_length=255, null=True, blank=True)
-    account_near = models.CharField(
-        max_length=255, null=False, blank=False, default="")
-    account_near_tax = models.CharField(
-        max_length=255, null=False, blank=False, default="")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -228,7 +226,7 @@ class InfoMF(models.Model):
 
 class UserDiscord(models.Model):
     wallet = models.CharField(
-        max_length=255, null=True, blank=True, unique=True)
+        max_length=255, null=True, blank=True)
     discord_id = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
