@@ -120,7 +120,7 @@ def get_artists(request):
 @permission_classes([AllowAny])
 def get_artist(request):
     data = request.data
-    artists = Artist.objects.filter(is_visible=True, id=data['id'])
+    artists = Artist.objects.filter(is_visible=True, id_collection=data['id'])
     serializer = ArtistSerializer(artists, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
