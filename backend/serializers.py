@@ -109,3 +109,9 @@ class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
         fields = '__all__'
+
+
+class OrderRedeemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderRedeem
+        fields = '__all__'

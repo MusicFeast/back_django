@@ -132,7 +132,7 @@ def get_artist(request):
 def get_tiers_coming(request):
     data = request.data
     try:
-        artist = Artist.objects.get(id=data['id'])
+        artist = Artist.objects.get(id_collection=data['id'])
     except:
         artist = None
 
@@ -593,3 +593,22 @@ def send_mail_mf(users_mail, subject, template_name, context):
     message.attach_alternative(content, 'text/html')
     message.send(fail_silently=False)
     return
+
+
+class OrderRedeemVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    # authentication_classes = [TokenAuthentication]
+    queryset = OrderRedeem.objects.all()
+    serializer_class = OrderRedeemSerializer
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

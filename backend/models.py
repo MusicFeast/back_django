@@ -258,3 +258,18 @@ class Subscribe(models.Model):
 
     def __str__(self):
         return '%s' % (self.email)
+
+
+class OrderRedeem(models.Model):
+    wallet_burn = models.CharField(max_length=255)
+    token_id = models.CharField(max_length=255)
+    hash_burn = models.CharField(max_length=255)
+    country = models.CharField(max_length=255, null=True, blank=True)
+    street_address = models.CharField(max_length=255, null=True, blank=True)
+    street_address2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state = models.CharField(max_length=255, null=True, blank=True)
+    postal = models.CharField(max_length=255, null=True, blank=True)
+    approved = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
