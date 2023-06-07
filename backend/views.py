@@ -208,12 +208,12 @@ class PerfilVS(viewsets.ModelViewSet):
         data.address = json.loads(data['address'])
 
         try:
-            if data.address['country'] and data.address['street_address'] and data.address['street_address2'] and data.address['city'] and data.address['state'] and data.address['postal']:
+            if data.address['country'] and data.address['phone_number'] and data.address['street_address'] and data.address['street_address2'] and data.address['city'] and data.address['state'] and data.address['postal']:
                 serializer = self.get_serializer(data=data)
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
                 perfil = Perfil.objects.get(wallet=data['wallet'])
-                address = Address.objects.create(perfil=perfil, country=data.address['country'], street_address=data.address['street_address'],
+                address = Address.objects.create(perfil=perfil, country=data.address['country'], phone_number=data.address['phone_number'], street_address=data.address['street_address'],
                                                  street_address2=data.address['street_address2'], city=data.address['city'], state=data.address['state'], postal=data.address['postal'])
                 data_address = AddressSerializer(address).data
                 headers = self.get_success_headers(serializer.data)
@@ -239,7 +239,7 @@ class PerfilVS(viewsets.ModelViewSet):
         data = request.data
         data.address = json.loads(data['address'])
         try:
-            if data.address['country'] and data.address['street_address'] and data.address['street_address2'] and data.address['city'] and data.address['state'] and data.address['postal']:
+            if data.address['country'] and data.address['phone_number'] and data.address['street_address'] and data.address['street_address2'] and data.address['city'] and data.address['state'] and data.address['postal']:
                 partial = kwargs.pop('partial', False)
                 instance = self.get_object()
                 serializer = self.get_serializer(
@@ -249,6 +249,7 @@ class PerfilVS(viewsets.ModelViewSet):
                 address = Address.objects.get(perfil=perfil)
 
                 address.country = data.address['country']
+                address.phone_number = data.address['phone_number']
                 address.street_address = data.address['street_address']
                 address.street_address2 = data.address['street_address2']
                 address.city = data.address['city']
