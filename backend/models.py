@@ -271,6 +271,9 @@ class OrderRedeem(models.Model):
     city = models.CharField(max_length=255, null=True, blank=True)
     state = models.CharField(max_length=255, null=True, blank=True)
     postal = models.CharField(max_length=255, null=True, blank=True)
+    sku = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(
+        max_length=255, null=True, blank=True, unique=True)
     phone_number = models.CharField(max_length=255, null=True, blank=True)
     approved = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
