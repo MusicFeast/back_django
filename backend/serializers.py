@@ -115,3 +115,9 @@ class OrderRedeemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderRedeem
         fields = '__all__'
+
+
+class DriveNftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DriveNft
+        fields = '__all__'

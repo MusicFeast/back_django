@@ -613,3 +613,10 @@ class OrderRedeemVS(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class DriveNftVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
+    queryset = DriveNft.objects.all()
+    serializer_class = DriveNftSerializer

@@ -273,8 +273,20 @@ class OrderRedeem(models.Model):
     postal = models.CharField(max_length=255, null=True, blank=True)
     sku = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(
-        max_length=255, null=True, blank=True, unique=True)
+        max_length=255, null=True, blank=True)
     phone_number = models.CharField(max_length=255, null=True, blank=True)
     approved = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+
+class DriveNft(models.Model):
+    wallet = models.CharField(
+        max_length=255, null=False, blank=False, default="")
+    token_id = models.CharField(
+        max_length=255, null=False, blank=False, default="")
+    email = models.EmailField(
+        max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return '%s - %s' % (self.wallet, self.token_id)
