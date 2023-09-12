@@ -25,6 +25,7 @@ router.register(r'userroles', UserRolesVS, basename='userroles')
 router.register(r'suscribe', SubscribeVS, basename='suscribe')
 router.register(r'order-redeem', OrderRedeemVS, basename='orderredeem')
 router.register(r'drive-nft', DriveNftVS, basename='drive-nft')
+router.register(r'contest-form', ContestFormVS,basename='contestform')
 # router.register(r'address', AddressVS,basename='address')
 
 urlpatterns = [

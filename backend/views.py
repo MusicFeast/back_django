@@ -620,3 +620,9 @@ class DriveNftVS(viewsets.ModelViewSet):
     authentication_classes = [BasicAuthentication]
     queryset = DriveNft.objects.all()
     serializer_class = DriveNftSerializer
+
+class ContestFormVS(viewsets.ModelViewSet):
+    permission_classes=[AllowAny]
+    authentication_classes=[BasicAuthentication]
+    queryset = ContestForm.objects.all()
+    serializer_class = ContestFormSerializer
