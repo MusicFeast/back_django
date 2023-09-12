@@ -621,8 +621,37 @@ class DriveNftVS(viewsets.ModelViewSet):
     queryset = DriveNft.objects.all()
     serializer_class = DriveNftSerializer
 
+
 class ContestFormVS(viewsets.ModelViewSet):
-    permission_classes=[AllowAny]
-    authentication_classes=[BasicAuthentication]
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
     queryset = ContestForm.objects.all()
     serializer_class = ContestFormSerializer
+
+    def create(self, request):
+        data = request.data
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        datos = serializer.data
+
+        url = 'http://localhost:3073/award-nft/'
+        response = requests.post(
+            url, json={'wallet': data["wallet"]})
+        # datares = response.content
+
+        return Response(datos, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
