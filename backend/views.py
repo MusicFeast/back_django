@@ -637,7 +637,7 @@ class ContestFormVS(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         datos = serializer.data
 
-        url = 'http://localhost:3073/award-nft/'
+        url = config('AWARD_NFT_API')
         response = requests.post(
             url, json={'wallet': data["wallet"]})
         # datares = response.content
