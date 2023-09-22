@@ -654,6 +654,7 @@ class ContestFormVS(viewsets.ModelViewSet):
         url = config('AWARD_NFT_API')
         response = requests.post(
             url, json={'wallet': data["wallet"], 'email': data["email"]})
+        print(response.content)
         # datares = response.content
 
         return Response(datos, status=status.HTTP_201_CREATED, headers=headers)
