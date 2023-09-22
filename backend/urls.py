@@ -25,7 +25,7 @@ router.register(r'userroles', UserRolesVS, basename='userroles')
 router.register(r'suscribe', SubscribeVS, basename='suscribe')
 router.register(r'order-redeem', OrderRedeemVS, basename='orderredeem')
 router.register(r'drive-nft', DriveNftVS, basename='drive-nft')
-router.register(r'contest-form', ContestFormVS,basename='contestform')
+router.register(r'contest-form', ContestFormVS, basename='contestform')
 # router.register(r'address', AddressVS,basename='address')
 
 urlpatterns = [
@@ -41,6 +41,7 @@ urlpatterns = [
     path('get-about', get_about),
     path('get-core-team', get_core_team),
     path('get-avatars/', get_avatars),
+    path('get-avatar/', get_avatar),
     path('get-events/', get_events),
     path('get-event-tickets/', get_event_tickets),
     path('get-media/', get_media),

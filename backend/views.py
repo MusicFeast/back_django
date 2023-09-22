@@ -439,6 +439,20 @@ def get_avatars(request):
     return Response(data, status=status.HTTP_200_OK)
 
 
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_avatar(request):
+    datos = request.data
+    item = Artist.objects.filter(id_collection=datos['artist']).first()
+    if item:
+        serializer = ArtistSerializer(item).data
+        data = serializer
+        return Response(data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class EventsVS(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
