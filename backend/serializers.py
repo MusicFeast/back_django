@@ -122,7 +122,14 @@ class DriveNftSerializer(serializers.ModelSerializer):
         model = DriveNft
         fields = '__all__'
 
+
 class ContestFormSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContestForm
-        fields = '__all__'  
+        fields = '__all__'
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Admin
+        fields = '__all__'

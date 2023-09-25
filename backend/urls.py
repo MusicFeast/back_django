@@ -26,6 +26,7 @@ router.register(r'suscribe', SubscribeVS, basename='suscribe')
 router.register(r'order-redeem', OrderRedeemVS, basename='orderredeem')
 router.register(r'drive-nft', DriveNftVS, basename='drive-nft')
 router.register(r'contest-form', ContestFormVS, basename='contestform')
+router.register(r'admins', AdminVS, basename='admins')
 # router.register(r'address', AddressVS,basename='address')
 
 urlpatterns = [
@@ -48,4 +49,5 @@ urlpatterns = [
     path('get-info-mf', get_info_mf),
     path('save-user-discord/', save_user_discord),
     path('get-chats-enabled/', get_chats_enabled),
+    path('is-admin/', is_admin)
 ]

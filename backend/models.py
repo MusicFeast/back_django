@@ -291,17 +291,30 @@ class DriveNft(models.Model):
     def __str__(self):
         return '%s - %s' % (self.wallet, self.token_id)
 
+
 class ContestForm(models.Model):
-    wallet=models.CharField(max_length=255,null=True,blank=True)
-    full_name=models.CharField(max_length=255,null=True,blank=True)
-    country=models.CharField(max_length=255,null=True,blank=True)
-    email=models.EmailField(max_length=255,null=True,blank=True, unique=True)
-    discord_id=models.CharField(max_length=255,null=True,blank=True)
-    twitter=models.CharField(max_length=255,null=True,blank=True)
-    bio=models.CharField(max_length=255,null=True,blank=True)
-    track_demo=models.CharField(max_length=255,null=True,blank=True)
-    track_desc=models.CharField(max_length=255,null=True,blank=True)
+    wallet = models.CharField(max_length=255, null=True, blank=True)
+    full_name = models.CharField(max_length=255, null=True, blank=True)
+    country = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(
+        max_length=255, null=True, blank=True, unique=True)
+    discord_id = models.CharField(max_length=255, null=True, blank=True)
+    twitter = models.CharField(max_length=255, null=True, blank=True)
+    bio = models.CharField(max_length=255, null=True, blank=True)
+    track_demo = models.CharField(max_length=255, null=True, blank=True)
+    track_desc = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        return '%s'%(self.full_name)
+        return '%s' % (self.full_name)
+
+
+class Admin(models.Model):
+    name = models.CharField(max_length=255, null=True, blank=True)
+    wallet = models.CharField(max_length=255, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '%s' % (self.name)

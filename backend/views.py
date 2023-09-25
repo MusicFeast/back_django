@@ -670,3 +670,35 @@ class ContestFormVS(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class AdminVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
+    queryset = Admin.objects.all()
+    serializer_class = AdminSerializer
+
+    def create(self, request):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def is_admin(request):
+    data = request.data
+    artist = Admin.objects.filter(wallet=data['admin'])
+    if artist:
+        return Response(True, status=status.HTTP_200_OK)
+    else:
+        return Response(False, status=status.HTTP_200_OK)
