@@ -47,6 +47,20 @@ INSTALLED_APPS = [
     'tinymce',
 ]
 
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'silver',
+    'height': 500,
+    'menubar': False,
+    'plugins': 'advlist,autolink,lists,link,image,charmap,print,preview,anchor,'
+               'searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,'
+               'code,help,wordcount,textcolor',
+    'toolbar': 'undo redo | formatselect | '
+               'bold italic underline strikethrough | forecolor backcolor | '
+               'alignleft aligncenter alignright alignjustify | '
+               'bullist numlist outdent indent | removeformat | '
+               'link image | help',
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -98,6 +112,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'musicfeast.wsgi.application'
+
 
 
 # Database
