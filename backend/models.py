@@ -86,7 +86,7 @@ class News(models.Model):
         max_length=255, null=False, blank=False, default="")
     title2 = models.CharField(
         max_length=255, null=False, blank=False, default="")
-    description = F()
+    description = HTMLField()
     desc_long = HTMLField()
     is_visible = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)

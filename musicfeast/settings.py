@@ -53,12 +53,49 @@ TINYMCE_DEFAULT_CONFIG = {
     'menubar': False,
     'plugins': 'advlist,autolink,lists,link,image,charmap,print,preview,anchor,'
                'searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,'
-               'code,help,wordcount,textcolor',
+               'code,help,wordcount,textcolor,responsivefilemanager',
     'toolbar': 'undo redo | formatselect | '
                'bold italic underline strikethrough | forecolor backcolor | '
                'alignleft aligncenter alignright alignjustify | '
                'bullist numlist outdent indent | removeformat | '
                'link image | help',
+    'external_filemanager_path': '/filemanager/',
+    'filemanager_title': 'File Manager',
+    'external_plugins': {'filemanager': '/filemanager/plugin.min.js'},
+    'filemanager_config': {
+        'max_image_width': 800,
+        'max_image_height': 800,
+        'thumbs_width': 200,
+        'thumbs_height': 200,
+        'thumbs_quality': 80,
+        'allowed_extensions': ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+        'denied_extensions': [],
+        'lang': 'en',
+        'logger': True,
+        'relative_urls': False,
+        'show_title': True,
+        'max_size': 0,
+        'max_files': 0,
+        'resize': True,
+        'convert_images': True,
+        'image_versions': {
+            'thumbnail': {
+                'width': 80,
+                'height': 80,
+                'quality': 80,
+            },
+            'medium': {
+                'width': 400,
+                'height': 400,
+                'quality': 80,
+            },
+            'large': {
+                'width': 800,
+                'height': 800,
+                'quality': 80,
+            },
+        },
+    },
 }
 
 MIDDLEWARE = [
