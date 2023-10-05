@@ -133,3 +133,15 @@ class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Admin
         fields = '__all__'
+
+
+class ArtistProposalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArtistProposal
+        fields = '__all__'
+
+
+class TierProposalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TierProposal
+        fields = '__all__'
