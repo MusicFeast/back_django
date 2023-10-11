@@ -113,6 +113,15 @@ def get_artists(request):
     serializer = ArtistSerializer(artists, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_contest(request):
+    contest = ContestForm.objects.filter()
+    serializer = ContestFormSerializer(contest, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)    
+
 
 @api_view(["POST"])
 @csrf_exempt
@@ -190,9 +199,10 @@ class NewsVS(viewsets.ModelViewSet):
 @authentication_classes([BasicAuthentication])
 @permission_classes([AllowAny])
 def get_news(request):
-    news = News.objects.filter(is_visible=True)
+    title = request.GET.get('title', '')
+    news = News.objects.filter(is_visible=True, title__icontains=title)
     serializer = NewsSerializer(news, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)    
 
 
 class PerfilVS(viewsets.ModelViewSet):

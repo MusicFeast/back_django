@@ -33,6 +33,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('get-carousel', get_carousel),
     path('get-artists', get_artists),
+    path('get-contest', get_contest),
     path('get-artist/', get_artist),
     path('get-tiers-coming/', get_tiers_coming),
     path('get-artists-home', get_artists_home),
