@@ -712,3 +712,17 @@ def is_admin(request):
         return Response(True, status=status.HTTP_200_OK)
     else:
         return Response(False, status=status.HTTP_200_OK)
+
+
+class ArtistProposalVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
+    queryset = ArtistProposal.objects.all()
+    serializer_class = ArtistProposalSerializer
+
+
+class TierProposalVS(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication]
+    queryset = TierProposal.objects.all()
+    serializer_class = TierProposalSerializer

@@ -318,3 +318,45 @@ class Admin(models.Model):
 
     def __str__(self):
         return '%s' % (self.name)
+
+
+class ArtistProposal(models.Model):
+    wallet = models.CharField(max_length=255, null=False, blank=False)
+    name = models.CharField(max_length=255, null=False,
+                            blank=False, default="")
+    description = models.CharField(max_length=255, null=False,
+                                   blank=False, default="")
+    about = models.CharField(max_length=255, null=False,
+                             blank=False, default="")
+    image = models.ImageField(null=True, blank=True)
+    banner = models.ImageField(null=True, blank=True)
+    banner_mobile = models.ImageField(null=True, blank=True)
+    instagram = models.CharField(max_length=255, null=True, blank=True)
+    twitter = models.CharField(max_length=255, null=True, blank=True)
+    facebook = models.CharField(max_length=255, null=True, blank=True)
+    discord = models.CharField(max_length=255, null=True, blank=True)
+    status = models.PositiveIntegerField(default=3)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '%s' % (self.name)
+
+
+class TierProposal(models.Model):
+    artist_proposal = models.ForeignKey(
+        ArtistProposal, on_delete=models.CASCADE)
+    tierNumber = models.PositiveIntegerField()
+    nft_name = models.CharField(max_length=255, null=False,
+                                blank=False)
+    description = models.CharField(max_length=255, null=False,
+                                   blank=False, default="")
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    image = models.CharField(max_length=255, null=False, blank=False)
+    copies = models.PositiveIntegerField()
+    status = models.PositiveIntegerField(default=3)
+    media = models.CharField(max_length=255, null=True, blank=True)
+    royalties = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.artist_proposal.name} - {self.name}'
