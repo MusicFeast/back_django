@@ -719,7 +719,49 @@ class ArtistProposalVS(viewsets.ModelViewSet):
     authentication_classes = [BasicAuthentication]
     queryset = ArtistProposal.objects.all()
     serializer_class = ArtistProposalSerializer
+    
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+@api_view(["POST"]) 
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_artist_proposal(request):
+    data = request.data
+    artist = ArtistProposal.objects.filter(wallet=data['wallet'])
+    serializer = ArtistProposalSerializer(artist, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def get_artist_proposals(request):
+    data = request.data
+    admin = Admin.objects.filter(wallet=data['wallet'])
+    if admin:
+        artistProposals = ArtistProposal.objects.all()
+        datos = []
+        for artistProposal in artistProposals:
+            serialized_data = ArtistProposalSerializer(artistProposal).data
+            serialized_data['tiers'] = TierProposalSerializer(
+                TierProposal.objects.filter(artist_proposal=artistProposal.id), many=True
+            ).data
+            datos.append(serialized_data)
+            
+        return Response(datos, status=status.HTTP_200_OK)
+    else:
+        artistProposals = ArtistProposal.objects.filter(wallet=data['wallet'])
+        datos = []
+        for artistProposal in artistProposals:
+            serialized_data = ArtistProposalSerializer(artistProposal).data
+            serialized_data['tiers'] = TierProposalSerializer(
+                TierProposal.objects.filter(artist_proposal=artistProposal.id), many=True
+            ).data
+            datos.append(serialized_data)
+            
+        return Response(datos, status=status.HTTP_200_OK)
 
 class TierProposalVS(viewsets.ModelViewSet):
     permission_classes = [AllowAny]

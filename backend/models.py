@@ -321,7 +321,7 @@ class Admin(models.Model):
 
 
 class ArtistProposal(models.Model):
-    wallet = models.CharField(max_length=255, null=False, blank=False)
+    wallet = models.CharField(max_length=255, null=False, blank=False, unique=True)
     name = models.CharField(max_length=255, null=False,
                             blank=False, default="")
     description = models.CharField(max_length=255, null=False,
@@ -359,4 +359,4 @@ class TierProposal(models.Model):
     royalties = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return f'{self.artist_proposal.name} - {self.name}'
+        return f'{self.artist_proposal.name} - {self.nft_name}'

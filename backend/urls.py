@@ -53,5 +53,7 @@ urlpatterns = [
     path('get-info-mf', get_info_mf),
     path('save-user-discord/', save_user_discord),
     path('get-chats-enabled/', get_chats_enabled),
-    path('is-admin/', is_admin)
+    path('is-admin/', is_admin),
+    path('get-artist-proposal/', get_artist_proposal),
+    path('get-artist-proposals/', get_artist_proposals)
 ]
