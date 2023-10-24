@@ -36,7 +36,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('get-carousel', get_carousel),
     path('get-artists', get_artists),
-    path('get-contest', get_contest),
     path('get-artist/', get_artist),
     path('get-tiers-coming/', get_tiers_coming),
     path('get-artists-home', get_artists_home),
@@ -55,5 +54,6 @@ urlpatterns = [
     path('get-chats-enabled/', get_chats_enabled),
     path('is-admin/', is_admin),
     path('get-artist-proposal/', get_artist_proposal),
-    path('get-artist-proposals/', get_artist_proposals)
+    path('get-artist-proposals/', get_artist_proposals),
+    path('response-proposal/', response_proposal)
 ]

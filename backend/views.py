@@ -746,7 +746,7 @@ def get_artist_proposals(request):
         for artistProposal in artistProposals:
             serialized_data = ArtistProposalSerializer(artistProposal).data
             serialized_data['tiers'] = TierProposalSerializer(
-                TierProposal.objects.filter(artist_proposal=artistProposal.id), many=True
+                TierProposal.objects.filter(artist_proposal=artistProposal.id, status=3), many=True
             ).data
             datos.append(serialized_data)
             
@@ -762,6 +762,79 @@ def get_artist_proposals(request):
             datos.append(serialized_data)
             
         return Response(datos, status=status.HTTP_200_OK)
+    
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def response_proposal(request):
+    data = request.data
+    admin = Admin.objects.filter(wallet=data['wallet']).first()
+    if admin:
+        tierProposal = TierProposal.objects.filter(id=data['tier_id']).first()
+        artistProposal = ArtistProposal.objects.filter(id=data['artist_id']).first()
+        if data['status'] == 1 and tierProposal and artistProposal:
+            id_collection = None
+            if (tierProposal.tierNumber == 1):
+                response = requests.post(
+                    config('NODE_URL_API') + "create-artist/", json={'walletArtist': artistProposal.wallet_artist, 'artistName': artistProposal.name})
+                dataJson = response.json()
+                id_collection = dataJson.get('id_collection')
+                
+                if id_collection:
+                    # Crear un objeto Artist con los datos de ArtistProposal
+                    artist = Artist(
+                        id_collection=id_collection,
+                        name=artistProposal.name,
+                        description=artistProposal.description,
+                        about=artistProposal.about,
+                        image=artistProposal.image,
+                        banner=artistProposal.banner,
+                        banner_mobile=artistProposal.banner_mobile,
+                        instagram=artistProposal.instagram,
+                        twitter=artistProposal.twitter,
+                        facebook=artistProposal.facebook,
+                        discord=artistProposal.discord,
+                        is_visible=True,  # Puedes establecer el valor deseado
+                        comming=False  # Puedes establecer el valor deseado
+                    )
+                    artist.save()
+
+                    # Actualiza el estado de artistProposal y guarda
+                    artistProposal.id_collection = id_collection
+                    artistProposal.status = 1
+                    artistProposal.save()
+                else:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+            id_collection = id_collection if id_collection is not None else artistProposal.id_collection
+                
+            price = float(tierProposal.price)
+            
+            responseTier = requests.post(
+                    config('NODE_URL_API') + "create-tiers/", json={'idCollection': id_collection, 'title': tierProposal.nft_name, 'description': tierProposal.description, 'price': price, 'media': tierProposal.image, 'royalty': tierProposal.royalties, 'royaltyBuy': tierProposal.royalties_split})
+            
+            if responseTier:
+                tierJson = responseTier.json()
+                hash = tierJson.get('hash')
+                artist = Artist.objects.get(id_collection=id_collection)
+                if artist and (tierProposal.tierNumber == 1 or tierProposal.tierNumber == 2):
+                    nftMedia = NftMedia.objects.get_or_create(artist=artist)
+                    if nftMedia:
+                        if tierProposal.tierNumber == 1:
+                            nftMedia[0].audio = tierProposal.audio
+                        else:
+                            nftMedia[0].video = tierProposal.video
+                        nftMedia[0].save()
+                tierProposal.status = 1
+                tierProposal.save()
+                return Response({"hash": hash},status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        elif data['status'] == 2 and tierProposal:
+            tierProposal.status = 2
+            tierProposal.save()
+            return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 class TierProposalVS(viewsets.ModelViewSet):
     permission_classes = [AllowAny]

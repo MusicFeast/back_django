@@ -24,15 +24,11 @@ graphviz==0.19.1
 # greenlet==1.1.2
 html5lib==1.1
 idna==3.3
-kiwisolver==1.4.1
 Markdown==3.3.4
-matplotlib==3.5.1
-numpy==1.23.0
 packaging==21.3
-pandas==1.4.3
-Pillow==8.2.0
+# Pillow==8.2.0
 # psycopg2==2.9.3
-psycopg2-binary==2.9.3
+# psycopg2-binary==2.9.3
 pycparser==2.21
 pydot==1.4.2
 pydyf==0.1.2

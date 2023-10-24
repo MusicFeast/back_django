@@ -322,6 +322,8 @@ class Admin(models.Model):
 
 class ArtistProposal(models.Model):
     wallet = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    wallet_artist = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    id_collection = models.CharField(max_length=255, null=True, blank=True, unique=True)
     name = models.CharField(max_length=255, null=False,
                             blank=False, default="")
     description = models.CharField(max_length=255, null=False,
@@ -353,10 +355,11 @@ class TierProposal(models.Model):
                                    blank=False, default="")
     price = models.DecimalField(decimal_places=2, max_digits=10)
     image = models.CharField(max_length=255, null=False, blank=False)
-    copies = models.PositiveIntegerField()
     status = models.PositiveIntegerField(default=3)
-    media = models.CharField(max_length=255, null=True, blank=True)
+    audio = models.FileField(null=True, blank=True)
+    video = models.CharField(max_length=255, null=True, blank=True)
     royalties = models.CharField(max_length=255, null=True, blank=True)
+    royalties_split = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f'{self.artist_proposal.name} - {self.nft_name}'
