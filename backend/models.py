@@ -3,6 +3,7 @@ from email.policy import default
 from django.db import models
 from django.contrib.auth.models import *
 from tinymce.models import HTMLField
+from decouple import config
 
 # Create your models here.
 
@@ -18,6 +19,8 @@ class Carousel(models.Model):
 class Artist(models.Model):
     id_collection = models.PositiveBigIntegerField(
         null=False, blank=False, default=0)
+    creator_id = models.CharField(max_length=255, null=False,
+                                  blank=False, default=config("WALLET_CREATOR"))
     name = models.CharField(max_length=255, null=False,
                             blank=False, default="")
     description = HTMLField()
@@ -321,9 +324,12 @@ class Admin(models.Model):
 
 
 class ArtistProposal(models.Model):
-    wallet = models.CharField(max_length=255, null=False, blank=False, unique=True)
-    wallet_artist = models.CharField(max_length=255, null=True, blank=True, unique=True)
-    id_collection = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    wallet = models.CharField(
+        max_length=255, null=False, blank=False, unique=True)
+    wallet_artist = models.CharField(
+        max_length=255, null=True, blank=True, unique=True)
+    id_collection = models.CharField(
+        max_length=255, null=True, blank=True, unique=True)
     name = models.CharField(max_length=255, null=False,
                             blank=False, default="")
     description = models.CharField(max_length=255, null=False,

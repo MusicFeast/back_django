@@ -113,6 +113,7 @@ def get_artists(request):
     serializer = ArtistSerializer(artists, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(["GET"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -120,7 +121,7 @@ def get_artists(request):
 def get_contest(request):
     contest = ContestForm.objects.filter()
     serializer = ContestFormSerializer(contest, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)    
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -202,7 +203,7 @@ def get_news(request):
     title = request.GET.get('title', '')
     news = News.objects.filter(is_visible=True, title__icontains=title)
     serializer = NewsSerializer(news, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)    
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PerfilVS(viewsets.ModelViewSet):
@@ -719,11 +720,12 @@ class ArtistProposalVS(viewsets.ModelViewSet):
     authentication_classes = [BasicAuthentication]
     queryset = ArtistProposal.objects.all()
     serializer_class = ArtistProposalSerializer
-    
+
     def list(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
-@api_view(["POST"]) 
+
+
+@api_view(["POST"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
 @permission_classes([AllowAny])
@@ -732,6 +734,7 @@ def get_artist_proposal(request):
     artist = ArtistProposal.objects.filter(wallet=data['wallet'])
     serializer = ArtistProposalSerializer(artist, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @csrf_exempt
@@ -749,7 +752,7 @@ def get_artist_proposals(request):
                 TierProposal.objects.filter(artist_proposal=artistProposal.id, status=3), many=True
             ).data
             datos.append(serialized_data)
-            
+
         return Response(datos, status=status.HTTP_200_OK)
     else:
         artistProposals = ArtistProposal.objects.filter(wallet=data['wallet'])
@@ -760,9 +763,10 @@ def get_artist_proposals(request):
                 TierProposal.objects.filter(artist_proposal=artistProposal.id), many=True
             ).data
             datos.append(serialized_data)
-            
+
         return Response(datos, status=status.HTTP_200_OK)
-    
+
+
 @api_view(["POST"])
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
@@ -772,19 +776,22 @@ def response_proposal(request):
     admin = Admin.objects.filter(wallet=data['wallet']).first()
     if admin:
         tierProposal = TierProposal.objects.filter(id=data['tier_id']).first()
-        artistProposal = ArtistProposal.objects.filter(id=data['artist_id']).first()
+        artistProposal = ArtistProposal.objects.filter(
+            id=data['artist_id']).first()
         if data['status'] == 1 and tierProposal and artistProposal:
             id_collection = None
+            artist = None
             if (tierProposal.tierNumber == 1):
                 response = requests.post(
                     config('NODE_URL_API') + "create-artist/", json={'walletArtist': artistProposal.wallet_artist, 'artistName': artistProposal.name})
                 dataJson = response.json()
                 id_collection = dataJson.get('id_collection')
-                
+
                 if id_collection:
                     # Crear un objeto Artist con los datos de ArtistProposal
                     artist = Artist(
                         id_collection=id_collection,
+                        creator_id=artistProposal.wallet,
                         name=artistProposal.name,
                         description=artistProposal.description,
                         about=artistProposal.about,
@@ -807,17 +814,27 @@ def response_proposal(request):
                 else:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
             id_collection = id_collection if id_collection is not None else artistProposal.id_collection
-                
+
             price = float(tierProposal.price)
-            
+
             responseTier = requests.post(
-                    config('NODE_URL_API') + "create-tiers/", json={'idCollection': id_collection, 'title': tierProposal.nft_name, 'description': tierProposal.description, 'price': price, 'media': tierProposal.image, 'royalty': tierProposal.royalties, 'royaltyBuy': tierProposal.royalties_split})
-            
+                config('NODE_URL_API') + "create-tiers/", json={'idCollection': id_collection, 'title': tierProposal.nft_name, 'description': tierProposal.description, 'price': price, 'media': tierProposal.image, 'royalty': tierProposal.royalties, 'royaltyBuy': tierProposal.royalties_split})
+
             if responseTier:
                 tierJson = responseTier.json()
                 hash = tierJson.get('hash')
                 artist = Artist.objects.get(id_collection=id_collection)
                 if artist and (tierProposal.tierNumber == 1 or tierProposal.tierNumber == 2):
+                    tiersComingSoon = TiersComingSoon(
+                        artist=artist,
+                        tierOne=False,
+                        tierTwo=True,
+                        tierThree=True,
+                        tierFour=True,
+                        tierFive=True,
+                        tierSix=True
+                    )
+                    tiersComingSoon.save()
                     nftMedia = NftMedia.objects.get_or_create(artist=artist)
                     if nftMedia:
                         if tierProposal.tierNumber == 1:
@@ -827,7 +844,7 @@ def response_proposal(request):
                         nftMedia[0].save()
                 tierProposal.status = 1
                 tierProposal.save()
-                return Response({"hash": hash},status=status.HTTP_200_OK)
+                return Response({"hash": hash}, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         elif data['status'] == 2 and tierProposal:
@@ -836,8 +853,35 @@ def response_proposal(request):
             return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
 class TierProposalVS(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     authentication_classes = [BasicAuthentication]
     queryset = TierProposal.objects.all()
     serializer_class = TierProposalSerializer
+
+
+@api_view(["POST"])
+@csrf_exempt
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
+def update_tier_coming_soong(request):
+    data = request.data
+    artist = Artist.objects.filter(creator_id=data.get('wallet')).first()
+    if artist:
+        tiersComingSoon = TiersComingSoon.objects.get(artist=artist)
+        if (data.get('tier') == "1"):
+            tiersComingSoon.tierOne = True
+        elif (data.get('tier') == "2"):
+            tiersComingSoon.tierTwo = True
+        elif (data.get('tier') == "3"):
+            tiersComingSoon.tierThree = True
+        elif (data.get('tier') == "4"):
+            tiersComingSoon.tierFour = True
+        elif (data.get('tier') == "5"):
+            tiersComingSoon.tierFive = True
+        elif (data.get('tier') == "6"):
+            tiersComingSoon.tierSix = True
+        tiersComingSoon.save()
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

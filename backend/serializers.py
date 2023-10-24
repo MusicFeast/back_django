@@ -132,9 +132,6 @@ class ContestFormSerializer(serializers.ModelSerializer):
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Admin
-<<<<<<< HEAD
-        fields = '__all__'
-=======
         fields = '__all__'
 
 
@@ -148,4 +145,3 @@ class TierProposalSerializer(serializers.ModelSerializer):
     class Meta:
         model = TierProposal
         fields = '__all__'
->>>>>>> refs/remotes/origin/main
