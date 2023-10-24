@@ -870,18 +870,18 @@ def update_tier_coming_soong(request):
     artist = Artist.objects.filter(creator_id=data.get('wallet')).first()
     if artist:
         tiersComingSoon = TiersComingSoon.objects.get(artist=artist)
-        if (data.get('tier') == "1"):
-            tiersComingSoon.tierOne = True
-        elif (data.get('tier') == "2"):
-            tiersComingSoon.tierTwo = True
-        elif (data.get('tier') == "3"):
-            tiersComingSoon.tierThree = True
-        elif (data.get('tier') == "4"):
-            tiersComingSoon.tierFour = True
-        elif (data.get('tier') == "5"):
-            tiersComingSoon.tierFive = True
-        elif (data.get('tier') == "6"):
-            tiersComingSoon.tierSix = True
+        if (data["tier"]) == "1"):
+            tiersComingSoon.tierOne=True
+        elif (data["tier"] == "2"):
+            tiersComingSoon.tierTwo=True
+        elif (data["tier"] == "3"):
+            tiersComingSoon.tierThree=True
+        elif (data["tier"] == "4"):
+            tiersComingSoon.tierFour=True
+        elif (data["tier"] == "5"):
+            tiersComingSoon.tierFive=True
+        elif (data["tier"] == "6"):
+            tiersComingSoon.tierSix=True
         tiersComingSoon.save()
-        return Response(status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response(status = status.HTTP_200_OK)
+    return Response(status = status.HTTP_405_METHOD_NOT_ALLOWED)
