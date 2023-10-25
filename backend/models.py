@@ -201,8 +201,9 @@ class EventTicket(models.Model):
 
 
 class NftMedia(models.Model):
-    artist = models.OneToOneField(
+    artist = models.ForeignKey(
         Artist, on_delete=models.CASCADE, null=True, blank=True)
+    number_collection = models.PositiveIntegerField(default=1)
     audio = models.FileField(null=True, blank=True)
     video = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)

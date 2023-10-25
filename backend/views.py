@@ -520,7 +520,8 @@ class NftMediaVS(viewsets.ModelViewSet):
 def get_media(request):
     data = request.data
     artist = Artist.objects.get(id_collection=data['artist'])
-    media = NftMedia.objects.get(artist=artist)
+    media = NftMedia.objects.filter(
+        artist=artist, number_collection=data['number_collection'])
     serializer = NftMediaSerializer(media)
     if data['media'] == 'audio':
         return Response({"media": serializer.data['audio']}, status=status.HTTP_200_OK)
@@ -771,6 +772,26 @@ def get_artist_proposals(request):
 @csrf_exempt
 @authentication_classes([BasicAuthentication])
 @permission_classes([AllowAny])
+def new_collection(request):
+    data = request.data
+    artist = Artist.objects.filter(
+        creator_id=data["wallet"], id_collection=data["id_collection"]).first()
+    if artist:
+        responseTier = requests.post(
+            config('NODE_URL_API') + "new-collection/", json={'idCollection': data["id_collection"], 'title': data["nft_name"], 'description': data["description"], 'price': data["price"], 'media': data["image"], 'royalty': data["royalties"], 'royaltyBuy': data["royalties_split"]})
+
+        if responseTier:
+            return Response({"hash": "hash"}, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@ api_view(["POST"])
+@ csrf_exempt
+@ authentication_classes([BasicAuthentication])
+@ permission_classes([AllowAny])
 def response_proposal(request):
     data = request.data
     admin = Admin.objects.filter(wallet=data['wallet']).first()
@@ -861,27 +882,29 @@ class TierProposalVS(viewsets.ModelViewSet):
     serializer_class = TierProposalSerializer
 
 
-@api_view(["POST"])
-@csrf_exempt
-@authentication_classes([BasicAuthentication])
-@permission_classes([AllowAny])
+@ api_view(["POST"])
+@ csrf_exempt
+@ authentication_classes([BasicAuthentication])
+@ permission_classes([AllowAny])
 def update_tier_coming_soong(request):
     data = request.data
-    artist = Artist.objects.filter(creator_id=data.get('wallet')).first()
+    artist = Artist.objects.filter(
+        creator_id=data["wallet"], id_collection=data["id_collection"]).first()
     if artist:
         tiersComingSoon = TiersComingSoon.objects.get(artist=artist)
-        if (data["tier"]) == "1"):
-            tiersComingSoon.tierOne=True
+        if (data["tier"]) == "1":
+            tiersComingSoon.tierOne = False
         elif (data["tier"] == "2"):
-            tiersComingSoon.tierTwo=True
+            tiersComingSoon.tierTwo = False
         elif (data["tier"] == "3"):
-            tiersComingSoon.tierThree=True
+            tiersComingSoon.tierThree = False
         elif (data["tier"] == "4"):
-            tiersComingSoon.tierFour=True
+            tiersComingSoon.tierFour = False
         elif (data["tier"] == "5"):
-            tiersComingSoon.tierFive=True
+            tiersComingSoon.tierFive = False
         elif (data["tier"] == "6"):
-            tiersComingSoon.tierSix=True
+            tiersComingSoon.tierSix = False
         tiersComingSoon.save()
-        return Response(status = status.HTTP_200_OK)
-    return Response(status = status.HTTP_405_METHOD_NOT_ALLOWED)
+        print(tiersComingSoon)
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

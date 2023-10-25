@@ -56,5 +56,6 @@ urlpatterns = [
     path('get-artist-proposal/', get_artist_proposal),
     path('get-artist-proposals/', get_artist_proposals),
     path('response-proposal/', response_proposal),
-    path('update-coming-soon/', update_tier_coming_soong)
+    path('update-coming-soon/', update_tier_coming_soong),
+    path('new-collection/', new_collection)
 ]

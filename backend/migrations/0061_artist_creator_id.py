@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='artist',
             name='creator_id',
-            field=models.CharField(default='musicfeast.testnet', max_length=255),
+            field=models.CharField(
+                default='musicfeast.testnet', max_length=255),
         ),
     ]
