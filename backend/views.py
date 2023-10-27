@@ -521,7 +521,7 @@ def get_media(request):
     data = request.data
     artist = Artist.objects.get(id_collection=data['artist'])
     media = NftMedia.objects.filter(
-        artist=artist, number_collection=data['number_collection'])
+        artist=artist, number_collection=data['number_collection']).first()
     serializer = NftMediaSerializer(media)
     if data['media'] == 'audio':
         return Response({"media": serializer.data['audio']}, status=status.HTTP_200_OK)
@@ -905,6 +905,13 @@ def update_tier_coming_soong(request):
         elif (data["tier"] == "6"):
             tiersComingSoon.tierSix = False
         tiersComingSoon.save()
+
+        if data.get("vimeo_id") and data.get("number_collection"):
+            nftMedia = NftMedia.objects.filter(
+                artist=artist, number_collection=data["number_collection"]).first()
+            if nftMedia:
+                nftMedia.video = data["vimeo_id"]
+                nftMedia.save()
         print(tiersComingSoon)
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
