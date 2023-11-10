@@ -721,6 +721,19 @@ class ArtistProposalVS(viewsets.ModelViewSet):
     authentication_classes = [BasicAuthentication]
     queryset = ArtistProposal.objects.all()
     serializer_class = ArtistProposalSerializer
+    
+    def create(self, request):
+        data = request.data
+
+        try:
+            perfil = Perfil.objects.get(wallet=data['wallet'])
+            artistProposal = ArtistProposal(wallet=data['wallet'],wallet_artist=data['wallet_artist'],name=data['name'],description=data['description'],about=data['about'],instagram=data['instagram'],twitter=data['twitter'],facebook=data['facebook'],image=perfil.image, banner=perfil.banner_artist,banner_mobile=perfil.banner_mobile)
+            artistProposal.save()
+            serializer = ArtistProposalSerializer(artistProposal)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print(e)
+            return Response("%s" % (e), status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

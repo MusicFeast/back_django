@@ -114,6 +114,9 @@ class Perfil(models.Model):
     telegram = models.CharField(max_length=255, null=True, blank=True)
     discord = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
+    banner_artist = models.ImageField(null=True, blank=True)
+    banner_mobile = models.ImageField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
