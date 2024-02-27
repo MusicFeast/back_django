@@ -64,7 +64,9 @@ class ArtistSubmission(models.Model):
 
 
 class TiersComingSoon(models.Model):
-    artist = models.OneToOneField(Artist, on_delete=models.CASCADE)
+    artist = models.ForeignKey(
+        Artist, on_delete=models.CASCADE, null=True, blank=True)
+    number_collection = models.PositiveIntegerField(default=1)
     tierOne = models.BooleanField(default=False)
     tierTwo = models.BooleanField(default=False)
     tierThree = models.BooleanField(default=False)
@@ -104,19 +106,20 @@ class Perfil(models.Model):
         max_length=255, unique=True, null=False, blank=False)
     full_name = models.CharField(max_length=255, null=True, blank=True)
     username = models.CharField(
-        max_length=255, null=True, blank=True, unique=True)
+        max_length=255, null=True, blank=True)
     email = models.EmailField(
-        max_length=255, null=True, blank=True, unique=True)
+        max_length=255, null=True, blank=True)
     avatar = models.ImageField(null=True, blank=True)
     banner = models.ImageField(null=True, blank=True)
-    instagram = models.CharField(max_length=255, null=True, blank=True)
-    twitter = models.CharField(max_length=255, null=True, blank=True)
-    telegram = models.CharField(max_length=255, null=True, blank=True)
-    discord = models.CharField(max_length=255, null=True, blank=True)
-    bio = models.TextField(null=True, blank=True)
     image = models.ImageField(null=True, blank=True)
     banner_artist = models.ImageField(null=True, blank=True)
     banner_mobile = models.ImageField(null=True, blank=True)
+    instagram = models.CharField(max_length=255, null=True, blank=True)
+    twitter = models.CharField(max_length=255, null=True, blank=True)
+    telegram = models.CharField(max_length=255, null=True, blank=True)
+    facebook = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    about = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -207,7 +210,8 @@ class NftMedia(models.Model):
     artist = models.ForeignKey(
         Artist, on_delete=models.CASCADE, null=True, blank=True)
     number_collection = models.PositiveIntegerField(default=1)
-    audio = models.FileField(null=True, blank=True)
+    # audio = models.FileField(null=True, blank=True)
+    audio = models.CharField(max_length=255, null=True, blank=True)
     video = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -335,6 +339,8 @@ class ArtistProposal(models.Model):
     id_collection = models.CharField(
         max_length=255, null=True, blank=True, unique=True)
     name = models.CharField(max_length=255, null=False,
+                            blank=False, default="")
+    email = models.CharField(max_length=255, null=False,
                             blank=False, default="")
     description = models.CharField(max_length=255, null=False,
                                    blank=False, default="")

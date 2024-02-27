@@ -55,7 +55,9 @@ urlpatterns = [
     path('is-admin/', is_admin),
     path('get-artist-proposal/', get_artist_proposal),
     path('get-artist-proposals/', get_artist_proposals),
+    path('get-artist-by-wallet/', get_artist_by_wallet),
     path('response-proposal/', response_proposal),
     path('update-coming-soon/', update_tier_coming_soong),
-    path('new-collection/', new_collection)
+    path('new-collection/', new_collection),
+    path('save-form/', save_form)
 ]
