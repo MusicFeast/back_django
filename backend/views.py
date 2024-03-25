@@ -1215,12 +1215,14 @@ def update_tier_coming_soong(request):
                     aws_access_key_id= config('AWS_ACCESS_KEY_ID'),
                     aws_secret_access_key= config('AWS_SECRET_ACCESS_KEY')
                 )
-
-                client.delete_object(
-                    Bucket='tier2',
-                    Key=dataSeria["audio"]
-                ) 
                 
+                wallets_administradores = ['andresdom.near', '5fda13fec977d4588daf6cd1fa941362e8d335d700fd7070868ba5f87edd0d54'] 
+                
+                if data['wallet'] not in wallets_administradores:
+                    client.delete_object(
+                        Bucket='tier2',
+                        Key=dataSeria["audio"]
+                    )
                 
             nftMedia.audio = data["media_id"]
             nftMedia.save()
@@ -1238,11 +1240,14 @@ def update_tier_coming_soong(request):
                     aws_access_key_id= config('AWS_ACCESS_KEY_ID'),
                     aws_secret_access_key= config('AWS_SECRET_ACCESS_KEY')
                 )
-
-                client.delete_object(
-                    Bucket='tier2',
-                    Key=dataSeria["video"]
-                ) 
+                
+                wallets_administradores = ['andresdom.near', '5fda13fec977d4588daf6cd1fa941362e8d335d700fd7070868ba5f87edd0d54'] 
+                
+                if data['wallet'] not in wallets_administradores:
+                    client.delete_object(
+                        Bucket='tier2',
+                        Key=dataSeria["video"]
+                    ) 
     
             nftMedia.video = data["media_id"]
             nftMedia.save()
